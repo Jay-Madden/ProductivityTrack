@@ -3,7 +3,11 @@ using Stylet;
 
 namespace ProductivityTrack.Pages
 {
-    public class ShellViewModel : Conductor<IScreen>, IHandle<OnLoginAccepted>, IHandle<OnLogout>, IHandle<OnMetricsActivate>
+    public class ShellViewModel : Conductor<IScreen>, 
+        IHandle<OnLoginAccepted>,
+        IHandle<OnLogout>,
+        IHandle<OnMetricsActivate>,
+        IHandle<ExitMetrics>
     {
         private LoginWindowViewModel _loginWindowViewModel { get; }
 
@@ -42,6 +46,11 @@ namespace ProductivityTrack.Pages
         public void Handle(OnMetricsActivate message)
         {
             ActiveItem = _metricsViewModel;
+        }
+
+        public void Handle(ExitMetrics message)
+        {
+            ActiveItem = _reminderBaseViewModel;
         }
     }
 }

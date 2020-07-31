@@ -95,6 +95,18 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Button
+                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    HorizontalAlignment="Left"
+                    Margin="10"
+                    Click="{s:Action OnClick_ExitMetrics}"
+                    ToolTip="Login">
+                    <materialDesign:PackIcon
+                        Width="24"
+                        Height="24"
+                        Kind="Close" />
+                </Button>
+
                 <TextBlock
                     Grid.ColumnSpan="2"
                     HorizontalAlignment="Center"

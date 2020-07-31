@@ -2,6 +2,7 @@
 using LiveCharts;
 using LiveCharts.Wpf;
 using ProductivityTrack.Models;
+using ProductivityTrack.Pages.Events;
 using Stylet;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace ProductivityTrack.Pages
         public Dictionary<int, ProcessMetricsModel> Metrics = new Dictionary<int, ProcessMetricsModel>();
 
         private ObservableCollection<ProcessMetricsModel> _metricsXaml;
-        public ObservableCollection<ProcessMetricsModel> MetricsXaml 
+        public ObservableCollection<ProcessMetricsModel> MetricsXaml
         {
             get => _metricsXaml;
             set {
@@ -52,8 +53,11 @@ namespace ProductivityTrack.Pages
 
         private IKeyboardMouseEvents m_GlobalHook;
 
-        public MetricsViewModel()
+        private IEventAggregator _eventAggregator;
+
+        public MetricsViewModel(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
 
 
             Processes = Process.GetProcesses();
@@ -61,7 +65,7 @@ namespace ProductivityTrack.Pages
             foreach (Process p in Processes)
             {
                 if (!string.IsNullOrEmpty(p.MainWindowTitle))
-                { 
+                {
                     using (var ico = Icon.ExtractAssociatedIcon(p.MainModule.FileName))
                     {
                         BitmapSource bitmap = Imaging.CreateBitmapSourceFromHIcon(ico.Handle, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
@@ -87,7 +91,7 @@ namespace ProductivityTrack.Pages
                         Title = p.ProcessName,
                         Values = new ChartValues<int>(Metrics[p.Id].WpmKeyPresses),
                         DataLabels = true,
-                        
+
                     };
 
                     FocusedTimeValues.Add(PieChartSeriesCollection[p.Id]);
@@ -193,25 +197,25 @@ namespace ProductivityTrack.Pages
                                 BitmapSource bitmap = Imaging.CreateBitmapSourceFromHIcon(ico.Handle, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                                 Metrics[p.Id] = new ProcessMetricsModel(p, bitmap);
                             };
-                            var piChartSeries = new PieSeries 
+                            var piChartSeries = new PieSeries
                             {
                                 Title = p.ProcessName,
                                 Values = new ChartValues<double> { Metrics[p.Id].FocusedTime },
-                                DataLabels = true 
+                                DataLabels = true
                             };
                             PieChartSeriesCollection[p.Id] = piChartSeries;
                             FocusedTimeValues.Add(piChartSeries);
 
                             var mouseActivitySeries = new ColumnSeries
-                            { 
+                            {
                                 Title = p.ProcessName,
                                 Values = new ChartValues<double> { Metrics[p.Id].ActiveMouseTime },
-                                DataLabels = true 
+                                DataLabels = true
                             };
                             MouseActivitySeriesCollection[p.Id] = mouseActivitySeries;
                             MouseActivityChart.Add(mouseActivitySeries);
 
-                           var kbSeries= new LineSeries
+                            var kbSeries = new LineSeries
                             {
                                 Title = p.ProcessName,
                                 Values = new ChartValues<int>(Metrics[p.Id].WpmKeyPresses),
@@ -244,7 +248,7 @@ namespace ProductivityTrack.Pages
                 {
                     CurrentWindows.Clear();
                 });
-            foreach(var p in Processes)
+            foreach (var p in Processes)
             {
                 if (!string.IsNullOrEmpty(p.MainWindowTitle))
                 {
@@ -306,6 +310,11 @@ namespace ProductivityTrack.Pages
             }
 
             return 0;
+        }
+
+        public void OnClick_ExitMetrics()
+        {
+            _eventAggregator.Publish(new ExitMetrics());
         }
     }
 }
