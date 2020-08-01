@@ -76,6 +76,7 @@
             <ToggleButton
                 Grid.Row="2"
                 Grid.Column="0"
+                ToolTip="Opens the productivity metrics page"
                 Click="{s:Action OnClick_Metrics}"
                 Style="{StaticResource MaterialDesignFloatingActionAccentButton}">
                 <materialDesign:PackIcon
